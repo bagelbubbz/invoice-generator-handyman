@@ -19,7 +19,7 @@ function generateRefNo(): string {
 const today = new Date().toISOString().split('T')[0];
 
 const DEFAULT_PREAMBLE =
-  'We are pleased to submit our invoice for the following works carried out at the above-mentioned premises. All works are inclusive of labour and materials unless otherwise stated.';
+  'Please find below our invoice for works carried out at the above-mentioned premises. All works are inclusive of labour and materials unless otherwise stated.';
 
 const DEFAULT_BUSINESS: BusinessInfo = {
   companyName: 'WEEWAY TECHNICAL MAINTENANCE SERVICE',
