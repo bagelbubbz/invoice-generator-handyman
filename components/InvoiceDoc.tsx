@@ -8,22 +8,7 @@ interface Props {
 
 const MIN_ROWS = 12;
 
-const border = '1px solid #000';
-
-const th: React.CSSProperties = {
-  border,
-  padding: '5px 8px',
-  fontWeight: 'bold',
-  fontSize: '11px',
-  backgroundColor: '#f5f5f5',
-};
-
-const td: React.CSSProperties = {
-  border,
-  padding: '5px 8px',
-  fontSize: '11px',
-  height: '22px',
-};
+const B = '1px solid #000';
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
@@ -38,7 +23,6 @@ export default function InvoiceDoc({ data }: Props) {
   const gstAmount = gst.enabled ? subtotal * (gst.pct / 100) : 0;
   const total = subtotal + gstAmount;
 
-  // Pad to minimum rows
   const rows = [...lineItems];
   while (rows.length < MIN_ROWS) {
     rows.push({ id: `pad-${rows.length}`, description: '', qty: '', amount: '' });
@@ -48,7 +32,7 @@ export default function InvoiceDoc({ data }: Props) {
     <div
       style={{
         fontFamily: 'Arial, Helvetica, sans-serif',
-        fontSize: '11px',
+        fontSize: '10pt',
         color: '#000',
         backgroundColor: '#fff',
         width: '100%',
@@ -58,128 +42,104 @@ export default function InvoiceDoc({ data }: Props) {
         style={{
           width: '100%',
           borderCollapse: 'collapse',
-          border,
+          border: B,
           tableLayout: 'fixed',
         }}
       >
         <colgroup>
-          {/* S/N: 6% | Description: 52% | Qty: 16% | Amount: 26% */}
-          <col style={{ width: '6%' }} />
-          <col style={{ width: '52%' }} />
-          <col style={{ width: '16%' }} />
+          {/* S/N 5% | Description 55% | Qty 14% | Amount 26% */}
+          <col style={{ width: '5%' }} />
+          <col style={{ width: '55%' }} />
+          <col style={{ width: '14%' }} />
           <col style={{ width: '26%' }} />
         </colgroup>
         <tbody>
-          {/* ── HEADER: logo + company name ── */}
+
+          {/* ── LOGO + COMPANY NAME ── */}
           <tr>
             <td
               colSpan={4}
               style={{
-                ...td,
+                border: B,
+                padding: '10px 12px 8px',
                 textAlign: 'center',
-                padding: '16px 12px',
-                borderBottom: border,
               }}
             >
               {businessInfo.logo && (
                 <img
                   src={businessInfo.logo}
-                  alt="Company Logo"
+                  alt="Logo"
                   style={{
-                    maxHeight: '80px',
-                    maxWidth: '280px',
+                    maxHeight: '70px',
+                    maxWidth: '260px',
                     display: 'block',
-                    margin: '0 auto 6px',
+                    margin: '0 auto 4px',
                     objectFit: 'contain',
                   }}
                 />
               )}
-              {businessInfo.chineseName && (
-                <div
-                  style={{
-                    fontStyle: 'italic',
-                    fontSize: '13px',
-                    marginBottom: '2px',
-                  }}
-                >
-                  {businessInfo.chineseName}
-                </div>
+              {!businessInfo.logo && (
+                <>
+                  {businessInfo.chineseName && (
+                    <div style={{ fontStyle: 'italic', fontSize: '12pt', marginBottom: '2px' }}>
+                      {businessInfo.chineseName}
+                    </div>
+                  )}
+                  <div style={{ fontWeight: 'bold', fontSize: '12pt', letterSpacing: '0.5px' }}>
+                    {businessInfo.companyName}
+                  </div>
+                </>
               )}
-              <div style={{ fontWeight: 'bold', fontSize: '13px', letterSpacing: '0.5px' }}>
-                {businessInfo.companyName}
-              </div>
             </td>
           </tr>
 
-          {/* ── CLIENT INFO (left) + INVOICE BOX (right) ── */}
+          {/* ── CLIENT INFO (left) | INVOICE BOX (right) ── */}
           <tr>
             <td
               colSpan={2}
               style={{
-                ...td,
+                border: B,
                 verticalAlign: 'top',
-                padding: '12px',
-                borderRight: border,
-                borderBottom: border,
+                padding: '8px 10px',
               }}
             >
-              <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ fontSize: '11px', paddingBottom: '6px', whiteSpace: 'nowrap', paddingRight: '8px' }}>
-                      <strong>Attention To :</strong>
-                    </td>
-                    <td style={{ fontSize: '11px', paddingBottom: '6px' }}>{header.attentionTo}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ fontSize: '11px', paddingBottom: '6px', whiteSpace: 'nowrap', paddingRight: '8px' }}>
-                      <strong>Contact No :</strong>
-                    </td>
-                    <td style={{ fontSize: '11px', paddingBottom: '6px' }}>{header.contactNo}</td>
-                  </tr>
-                  {header.re && (
-                    <tr>
-                      <td style={{ fontSize: '11px', paddingTop: '4px', whiteSpace: 'nowrap', paddingRight: '8px' }}>
-                        <strong>Re :</strong>
-                      </td>
-                      <td style={{ fontSize: '11px', paddingTop: '4px' }}>{header.re}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <div style={{ marginBottom: '4px', fontSize: '10pt' }}>
+                <strong>Attention To :</strong>&nbsp;&nbsp;{header.attentionTo}
+              </div>
+              <div style={{ marginBottom: '4px', fontSize: '10pt' }}>
+                <strong>Contact No :</strong>&nbsp;&nbsp;{header.contactNo}
+              </div>
+              {header.re && (
+                <div style={{ marginTop: '6px', fontSize: '10pt' }}>
+                  <strong>Re :</strong>&nbsp;&nbsp;{header.re}
+                </div>
+              )}
             </td>
             <td
               colSpan={2}
               style={{
-                ...td,
+                border: B,
                 verticalAlign: 'top',
-                padding: '12px',
-                borderBottom: border,
+                padding: '8px 10px',
               }}
             >
-              <div
-                style={{
-                  border,
-                  padding: '10px 12px',
-                  minHeight: '70px',
-                }}
-              >
+              <div style={{ border: B, padding: '6px 10px' }}>
                 <div
                   style={{
                     fontWeight: 'bold',
-                    fontSize: '13px',
-                    marginBottom: '8px',
-                    borderBottom: '1px solid #ccc',
+                    fontSize: '11pt',
                     paddingBottom: '4px',
+                    marginBottom: '4px',
+                    borderBottom: '1px solid #888',
                   }}
                 >
                   Invoice
                 </div>
-                <div style={{ marginBottom: '4px' }}>
-                  <strong>Our Ref :</strong> {header.refNo}
+                <div style={{ marginBottom: '3px', fontSize: '9.5pt' }}>
+                  <strong>Our Ref :</strong>&nbsp;{header.refNo}
                 </div>
-                <div>
-                  <strong>Date :</strong> {formatDate(header.date)}
+                <div style={{ fontSize: '9.5pt' }}>
+                  <strong>Date :</strong>&nbsp;{formatDate(header.date)}
                 </div>
               </div>
             </td>
@@ -191,11 +151,10 @@ export default function InvoiceDoc({ data }: Props) {
               <td
                 colSpan={4}
                 style={{
-                  ...td,
-                  padding: '8px 12px',
-                  fontSize: '10px',
-                  lineHeight: '1.5',
-                  borderBottom: border,
+                  border: B,
+                  padding: '5px 10px',
+                  fontSize: '8.5pt',
+                  lineHeight: '1.4',
                 }}
               >
                 {header.preamble}
@@ -205,21 +164,70 @@ export default function InvoiceDoc({ data }: Props) {
 
           {/* ── TABLE HEADER ── */}
           <tr>
-            <td style={{ ...th, textAlign: 'center' }}>S/N</td>
-            <td style={th}>Description</td>
-            <td style={{ ...th, textAlign: 'center' }}>Qty</td>
-            <td style={{ ...th, textAlign: 'right' }}>Amount (SGD $)</td>
+            {[
+              { label: 'S/N', align: 'center' as const },
+              { label: 'Description', align: 'left' as const },
+              { label: 'Qty', align: 'center' as const },
+              { label: 'Amount (SGD $)', align: 'right' as const },
+            ].map(({ label, align }) => (
+              <td
+                key={label}
+                style={{
+                  border: B,
+                  padding: '4px 8px',
+                  fontWeight: 'bold',
+                  fontSize: '10pt',
+                  textAlign: align,
+                  backgroundColor: '#eeeeee',
+                }}
+              >
+                {label}
+              </td>
+            ))}
           </tr>
 
           {/* ── LINE ITEMS ── */}
           {rows.map((row, i) => (
             <tr key={row.id}>
-              <td style={{ ...td, textAlign: 'center', color: row.description ? '#000' : '#ccc' }}>
+              <td
+                style={{
+                  border: B,
+                  padding: '3px 6px',
+                  fontSize: '9.5pt',
+                  textAlign: 'center',
+                  height: '20px',
+                }}
+              >
                 {row.description ? i + 1 : ''}
               </td>
-              <td style={td}>{row.description}</td>
-              <td style={{ ...td, textAlign: 'center' }}>{row.qty}</td>
-              <td style={{ ...td, textAlign: 'right' }}>
+              <td
+                style={{
+                  border: B,
+                  padding: '3px 8px',
+                  fontSize: '9.5pt',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {row.description}
+              </td>
+              <td
+                style={{
+                  border: B,
+                  padding: '3px 6px',
+                  fontSize: '9.5pt',
+                  textAlign: 'center',
+                }}
+              >
+                {row.qty}
+              </td>
+              <td
+                style={{
+                  border: B,
+                  padding: '3px 8px',
+                  fontSize: '9.5pt',
+                  textAlign: 'right',
+                }}
+              >
                 {row.amount ? `$${parseFloat(row.amount).toFixed(2)}` : ''}
               </td>
             </tr>
@@ -230,35 +238,48 @@ export default function InvoiceDoc({ data }: Props) {
             <td
               colSpan={3}
               style={{
-                ...td,
+                border: B,
+                padding: '6px 10px',
+                fontSize: '9.5pt',
                 verticalAlign: 'top',
-                borderRight: border,
-                padding: '10px 12px',
               }}
             >
-              <strong>Job Site :</strong> {header.jobSite}
+              <strong>Job Site :</strong>&nbsp;&nbsp;{header.jobSite}
             </td>
             <td
               style={{
-                ...td,
-                textAlign: 'right',
+                border: B,
+                padding: '6px 10px',
+                fontSize: '9.5pt',
                 verticalAlign: 'top',
-                padding: '10px 12px',
               }}
             >
               {gst.enabled && (
-                <>
-                  <div style={{ marginBottom: '3px' }}>
-                    Subtotal: ${subtotal.toFixed(2)}
-                  </div>
-                  <div style={{ marginBottom: '3px' }}>
-                    GST ({gst.pct}%): ${gstAmount.toFixed(2)}
-                  </div>
-                </>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '3px' }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ fontSize: '9pt' }}>Subtotal</td>
+                      <td style={{ fontSize: '9pt', textAlign: 'right' }}>${subtotal.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ fontSize: '9pt' }}>GST ({gst.pct}%)</td>
+                      <td style={{ fontSize: '9pt', textAlign: 'right' }}>${gstAmount.toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
               )}
-              <div style={{ fontWeight: 'bold', fontSize: '12px', borderTop: gst.enabled ? '1px solid #ccc' : 'none', paddingTop: gst.enabled ? '4px' : '0' }}>
-                Total: ${total.toFixed(2)}
-              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', borderTop: gst.enabled ? '1px solid #000' : 'none' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ fontWeight: 'bold', fontSize: '10pt', paddingTop: gst.enabled ? '3px' : '0' }}>
+                      Total
+                    </td>
+                    <td style={{ fontWeight: 'bold', fontSize: '10pt', textAlign: 'right', paddingTop: gst.enabled ? '3px' : '0' }}>
+                      ${total.toFixed(2)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
 
@@ -267,41 +288,48 @@ export default function InvoiceDoc({ data }: Props) {
             <td
               colSpan={2}
               style={{
-                ...td,
+                border: B,
+                padding: '8px 10px',
                 verticalAlign: 'top',
-                padding: '12px',
-                borderRight: border,
+                fontSize: '9.5pt',
               }}
             >
-              <div style={{ fontSize: '11px', marginBottom: '6px' }}>Issued By :</div>
-              <div style={{ fontWeight: 'bold', fontSize: '11px', marginBottom: '8px' }}>
+              <div style={{ marginBottom: '4px' }}>Issued By :</div>
+              <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>
                 {businessInfo.companyName}
               </div>
               {businessInfo.signature ? (
                 <img
                   src={businessInfo.signature}
                   alt="Signature"
-                  style={{ maxHeight: '50px', maxWidth: '150px', display: 'block', marginBottom: '4px' }}
+                  style={{
+                    maxHeight: '48px',
+                    maxWidth: '160px',
+                    display: 'block',
+                    marginBottom: '2px',
+                  }}
                 />
               ) : (
-                <div style={{ marginTop: '32px' }} />
+                <div style={{ height: '36px' }} />
               )}
-              <div style={{ borderTop: '1px solid #000', width: '160px', marginTop: '4px' }} />
+              <div style={{ borderTop: '1px solid #000', width: '170px', marginTop: '2px' }} />
             </td>
             <td
               colSpan={2}
               style={{
-                ...td,
+                border: B,
+                padding: '8px 10px',
                 verticalAlign: 'top',
-                padding: '12px',
+                fontSize: '9.5pt',
               }}
             >
-              <div style={{ fontSize: '11px', marginBottom: '6px' }}>Agreed / Accepted by :</div>
-              <div style={{ fontSize: '11px', marginBottom: '4px' }}>Name / Signature</div>
-              <div style={{ marginTop: '36px' }} />
-              <div style={{ borderTop: '1px solid #000', width: '160px' }} />
+              <div style={{ marginBottom: '4px' }}>Agreed / Accepted by :</div>
+              <div style={{ marginBottom: '6px' }}>Name / Signature</div>
+              <div style={{ height: '36px' }} />
+              <div style={{ borderTop: '1px solid #000', width: '170px', marginTop: '2px' }} />
             </td>
           </tr>
+
         </tbody>
       </table>
     </div>

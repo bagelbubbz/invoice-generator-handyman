@@ -2,23 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Print styles ── */
+/* ── Screen: hide print area ── */
 @media screen {
   .print-only {
     display: none !important;
   }
 }
 
+/* ── Print styles ── */
 @media print {
   /* Hide all app chrome */
   .no-print {
     display: none !important;
   }
 
-  /* Show only the invoice document */
+  /* Show invoice document only */
   .print-only {
     display: block !important;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -31,15 +32,21 @@
     margin: 10mm;
   }
 
-  body {
-    background: white !important;
-    margin: 0;
-    padding: 0;
-  }
-
   html,
   body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
     height: auto !important;
     overflow: visible !important;
+  }
+
+  /* Keep table rows together where possible */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: auto;
   }
 }
