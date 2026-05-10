@@ -17,7 +17,8 @@ function formatDate(dateStr: string): string {
 }
 
 export default function InvoiceDoc({ data }: Props) {
-  const { businessInfo, header, lineItems, gst } = data;
+  const { businessInfo, header, lineItems, gst, docType } = data;
+  const docLabel = docType === 'quotation' ? 'Quotation' : 'Invoice';
 
   const subtotal = lineItems.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
   const gstAmount = gst.enabled ? subtotal * (gst.pct / 100) : 0;
@@ -131,7 +132,7 @@ export default function InvoiceDoc({ data }: Props) {
                     borderBottom: '1px solid #888',
                   }}
                 >
-                  Invoice
+                  {docLabel}
                 </div>
                 <div style={{ marginBottom: '3px', fontSize: '9.5pt' }}>
                   <strong>Our Ref :</strong>&nbsp;{header.refNo}

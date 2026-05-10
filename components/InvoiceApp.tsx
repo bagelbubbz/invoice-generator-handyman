@@ -64,8 +64,11 @@ function saveCounter(n: number) {
 
 const today = new Date().toISOString().split('T')[0];
 
-const DEFAULT_PREAMBLE =
+const DEFAULT_PREAMBLE_INVOICE =
   'Please find below our invoice for works carried out at the above-mentioned premises. All works are inclusive of labour and materials unless otherwise stated.';
+
+const DEFAULT_PREAMBLE_QUOTATION =
+  'Please find below our quotation for works to be carried out at the above-mentioned premises. All works are inclusive of labour and materials unless otherwise stated.';
 
 const DEFAULT_BUSINESS: BusinessInfo = {
   companyName: 'WEEWAY TECHNICAL MAINTENANCE SERVICE',
@@ -82,12 +85,13 @@ export default function InvoiceApp() {
     attentionTo: '',
     contactNo: '+65 ',
     jobSite: '',
-    preamble: DEFAULT_PREAMBLE,
+    preamble: DEFAULT_PREAMBLE_INVOICE,
   });
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: genId(), description: '', qty: '1 Lot', amount: '' },
   ]);
   const [gst, setGst] = useState<GSTSettings>({ enabled: false, pct: 9 });
+  const [docType, setDocType] = useState<'invoice' | 'quotation'>('invoice');
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
   const [mounted, setMounted] = useState(false);
   const [history, setHistory] = useState<SavedInvoice[]>([]);
@@ -183,11 +187,12 @@ export default function InvoiceApp() {
   const gstAmount = gst.enabled ? subtotal * (gst.pct / 100) : 0;
   const total = subtotal + gstAmount;
 
-  const invoiceData = { businessInfo, header, lineItems, gst };
+  const invoiceData = { businessInfo, header, lineItems, gst, docType };
 
   useEffect(() => {
-    document.title = `Weeway Technical Maintenance Service - Invoice ${header.refNo}`;
-  }, [header.refNo]);
+    const label = docType === 'quotation' ? 'Quotation' : 'Invoice';
+    document.title = `Weeway Technical Maintenance Service - ${label} ${header.refNo}`;
+  }, [header.refNo, docType]);
 
   const saveToHistory = (data: typeof invoiceData, tot: number) => {
     const entry: SavedInvoice = {
@@ -220,8 +225,9 @@ export default function InvoiceApp() {
       attentionTo: '',
       contactNo: '+65 ',
       jobSite: '',
-      preamble: DEFAULT_PREAMBLE,
+      preamble: DEFAULT_PREAMBLE_INVOICE,
     });
+    setDocType('invoice');
     setLineItems([{ id: genId(), description: '', qty: '1 Lot', amount: '' }]);
     setGst({ enabled: false, pct: 9 });
     setActiveTab('form');

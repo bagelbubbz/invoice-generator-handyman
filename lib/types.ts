@@ -31,6 +31,7 @@ export interface InvoiceData {
   header: InvoiceHeader;
   lineItems: LineItem[];
   gst: GSTSettings;
+  docType: 'invoice' | 'quotation';
 }
 
 export interface SavedInvoice {
