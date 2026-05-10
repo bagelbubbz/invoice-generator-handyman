@@ -8,14 +8,14 @@ import type { PresetJob } from '@/lib/presets';
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-function PreviewScaler({ children }: { children: React.ReactNode }) {
+function PreviewScaler({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
   const updateScale = useCallback(() => {
     if (containerRef.current) {
       const available = containerRef.current.offsetWidth;
-      setScale(Math.min(1, available / 794));
+      if (available > 0) setScale(Math.min(1, available / 794));
     }
   }, []);
 
@@ -25,6 +25,10 @@ function PreviewScaler({ children }: { children: React.ReactNode }) {
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();
   }, [updateScale]);
+
+  useEffect(() => {
+    if (isVisible) setTimeout(updateScale, 30);
+  }, [isVisible, updateScale]);
 
   return (
     <div ref={containerRef} style={{ width: '100%' }}>
@@ -676,7 +680,7 @@ export default function InvoiceApp() {
             <p className="text-center text-gray-500 text-xs mb-4 font-medium uppercase tracking-wide">
               Live Preview
             </p>
-            <PreviewScaler>
+            <PreviewScaler isVisible={activeTab === 'preview'}>
               <div
                 className="bg-white shadow-xl rounded-sm"
                 style={{ width: '794px', minHeight: '1123px' }}
