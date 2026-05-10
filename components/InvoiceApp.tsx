@@ -542,7 +542,7 @@ export default function InvoiceApp() {
                         <td className="py-2 px-1 text-center">
                           <button
                             onClick={() => removeLineItem(item.id)}
-                            className="text-gray-300 hover:text-red-400 text-sm leading-none transition-colors"
+                            className="text-red-300 hover:text-red-500 text-lg leading-none transition-colors w-7 h-7 flex items-center justify-center rounded hover:bg-red-50"
                             title="Remove row"
                           >
                             ✕
@@ -562,7 +562,7 @@ export default function InvoiceApp() {
                       <span className="text-xs text-gray-400 font-medium">#{i + 1}</span>
                       <button
                         onClick={() => removeLineItem(item.id)}
-                        className="text-gray-300 hover:text-red-400 text-sm transition-colors"
+                        className="text-red-300 hover:text-red-500 text-xl font-bold transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-red-50"
                       >✕</button>
                     </div>
                     <textarea
