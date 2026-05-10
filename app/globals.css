@@ -24,12 +24,14 @@
     left: 0;
     width: 100%;
     background: white;
+    padding: 10mm;
+    box-sizing: border-box;
   }
 
-  /* A4 portrait, 10mm margins */
+  /* Zero page margins removes browser URL/date header+footer */
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 0;
   }
 
   html,

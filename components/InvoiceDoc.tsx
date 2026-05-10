@@ -70,8 +70,8 @@ export default function InvoiceDoc({ data }: Props) {
                   src={businessInfo.logo}
                   alt="Logo"
                   style={{
-                    maxHeight: '70px',
-                    maxWidth: '260px',
+                    maxHeight: '110px',
+                    maxWidth: '380px',
                     display: 'block',
                     margin: '0 auto 4px',
                     objectFit: 'contain',
