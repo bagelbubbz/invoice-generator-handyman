@@ -328,7 +328,7 @@ export default function InvoiceApp() {
                 Invoice Details
               </h2>
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
                   <div>
                     <label className={labelCls}>Reference No.</label>
                     <input
@@ -401,7 +401,8 @@ export default function InvoiceApp() {
                 <span className="bg-purple-100 text-purple-700 rounded px-2 py-0.5 text-xs">ITEMS</span>
                 Line Items
               </h2>
-              <div className="overflow-x-auto -mx-1">
+              {/* Desktop table */}
+              <div className="hidden sm:block overflow-x-auto -mx-1">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 text-gray-500 text-xs border-y border-gray-100">
@@ -421,9 +422,7 @@ export default function InvoiceApp() {
                             className="w-full bg-transparent focus:bg-white focus:border focus:border-gray-200 rounded px-1.5 py-1 text-sm focus:outline-none"
                             value={item.description}
                             placeholder="Description"
-                            onChange={(e) =>
-                              updateLineItem(item.id, 'description', e.target.value)
-                            }
+                            onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
                           />
                         </td>
                         <td className="py-2 px-1">
@@ -458,6 +457,51 @@ export default function InvoiceApp() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile cards */}
+              <div className="sm:hidden space-y-2">
+                {lineItems.map((item, i) => (
+                  <div key={item.id} className="border border-gray-100 rounded-lg p-3 bg-gray-50 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400 font-medium">#{i + 1}</span>
+                      <button
+                        onClick={() => removeLineItem(item.id)}
+                        className="text-gray-300 hover:text-red-400 text-sm transition-colors"
+                      >✕</button>
+                    </div>
+                    <textarea
+                      rows={2}
+                      className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-none"
+                      placeholder="Description"
+                      value={item.description}
+                      onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-xs text-gray-500 mb-0.5 block">Qty</label>
+                        <input
+                          className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                          value={item.qty}
+                          onChange={(e) => updateLineItem(item.id, 'qty', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500 mb-0.5 block">Amount ($)</label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                          placeholder="0"
+                          value={item.amount}
+                          onChange={(e) => updateLineItem(item.id, 'amount', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
               <button
                 onClick={() => addLineItem()}
                 className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
