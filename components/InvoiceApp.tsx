@@ -426,6 +426,34 @@ export default function InvoiceApp() {
                 Invoice Details <span className="text-gray-400 font-normal text-xs">账单详情</span>
               </h2>
               <div className="space-y-3">
+                {/* Invoice / Quotation toggle */}
+                <div className="flex rounded-lg overflow-hidden border border-gray-200 text-sm font-medium">
+                  <button
+                    onClick={() => {
+                      setDocType('invoice');
+                      setHeader((p) => ({
+                        ...p,
+                        preamble: p.preamble === DEFAULT_PREAMBLE_QUOTATION ? DEFAULT_PREAMBLE_INVOICE : p.preamble,
+                      }));
+                    }}
+                    className={`flex-1 py-2.5 transition-colors ${docType === 'invoice' ? 'bg-blue-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                  >
+                    🧾 Invoice <span className={`font-normal text-xs ${docType === 'invoice' ? 'opacity-70' : 'text-gray-400'}`}>发票</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDocType('quotation');
+                      setHeader((p) => ({
+                        ...p,
+                        preamble: p.preamble === DEFAULT_PREAMBLE_INVOICE ? DEFAULT_PREAMBLE_QUOTATION : p.preamble,
+                      }));
+                    }}
+                    className={`flex-1 py-2.5 transition-colors ${docType === 'quotation' ? 'bg-blue-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+                  >
+                    📋 Quotation <span className={`font-normal text-xs ${docType === 'quotation' ? 'opacity-70' : 'text-gray-400'}`}>报价单</span>
+                  </button>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelCls}>Reference No. <span className="text-gray-400 font-normal">参考编号</span></label>
