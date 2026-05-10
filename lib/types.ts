@@ -32,3 +32,13 @@ export interface InvoiceData {
   lineItems: LineItem[];
   gst: GSTSettings;
 }
+
+export interface SavedInvoice {
+  id: string;
+  savedAt: string;
+  refNo: string;
+  attentionTo: string;
+  jobSite: string;
+  total: number;
+  data: InvoiceData;
+}

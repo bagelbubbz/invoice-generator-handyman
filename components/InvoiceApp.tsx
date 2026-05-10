@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import QuickAddPanel from './QuickAddPanel';
 import InvoiceDoc from './InvoiceDoc';
-import type { BusinessInfo, InvoiceHeader, LineItem, GSTSettings } from '@/lib/types';
+import type { BusinessInfo, InvoiceHeader, LineItem, GSTSettings, SavedInvoice } from '@/lib/types';
 import type { PresetJob } from '@/lib/presets';
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -43,12 +43,20 @@ function PreviewScaler({ children }: { children: React.ReactNode }) {
   );
 }
 
-function generateRefNo(): string {
-  const d = new Date();
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const yyyy = d.getFullYear();
-  return `SK${dd}/${mm}/${yyyy}`;
+function generateRefNo(n: number): string {
+  return `SK-${String(n).padStart(3, '0')}`;
+}
+
+function getNextCounter(): number {
+  try {
+    return parseInt(localStorage.getItem('ww_invoice_counter') || '1');
+  } catch {
+    return 1;
+  }
+}
+
+function saveCounter(n: number) {
+  try { localStorage.setItem('ww_invoice_counter', String(n)); } catch {}
 }
 
 const today = new Date().toISOString().split('T')[0];
@@ -66,7 +74,7 @@ const DEFAULT_BUSINESS: BusinessInfo = {
 export default function InvoiceApp() {
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(DEFAULT_BUSINESS);
   const [header, setHeader] = useState<InvoiceHeader>({
-    refNo: generateRefNo(),
+    refNo: 'SK-001',
     date: today,
     attentionTo: '',
     contactNo: '+65 ',
@@ -79,11 +87,13 @@ export default function InvoiceApp() {
   const [gst, setGst] = useState<GSTSettings>({ enabled: false, pct: 9 });
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
   const [mounted, setMounted] = useState(false);
+  const [history, setHistory] = useState<SavedInvoice[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const sigInputRef = useRef<HTMLInputElement>(null);
 
-  // Load persisted business info
+  // Load persisted data on mount
   useEffect(() => {
     setMounted(true);
     try {
@@ -97,6 +107,14 @@ export default function InvoiceApp() {
           signature: parsed.signature || DEFAULT_BUSINESS.signature,
         });
       }
+    } catch {}
+    // Load counter and set ref number
+    const counter = getNextCounter();
+    setHeader((p) => ({ ...p, refNo: generateRefNo(counter) }));
+    // Load history
+    try {
+      const hist = localStorage.getItem('ww_invoice_history');
+      if (hist) setHistory(JSON.parse(hist));
     } catch {}
   }, []);
 
@@ -168,7 +186,59 @@ export default function InvoiceApp() {
     document.title = `Weeway Technical Maintenance Service - Invoice ${header.refNo}`;
   }, [header.refNo]);
 
-  const handlePrint = () => window.print();
+  const saveToHistory = (data: typeof invoiceData, tot: number) => {
+    const entry: SavedInvoice = {
+      id: genId(),
+      savedAt: new Date().toISOString(),
+      refNo: data.header.refNo,
+      attentionTo: data.header.attentionTo,
+      jobSite: data.header.jobSite,
+      total: tot,
+      data,
+    };
+    setHistory((prev) => {
+      const next = [entry, ...prev].slice(0, 50);
+      try { localStorage.setItem('ww_invoice_history', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const handlePrint = () => {
+    saveToHistory(invoiceData, total);
+    window.print();
+  };
+
+  const handleNewInvoice = () => {
+    const counter = getNextCounter() + 1;
+    saveCounter(counter);
+    setHeader({
+      refNo: generateRefNo(counter),
+      date: today,
+      attentionTo: '',
+      contactNo: '+65 ',
+      jobSite: '',
+      preamble: DEFAULT_PREAMBLE,
+    });
+    setLineItems([{ id: genId(), description: '', qty: '1 Lot', amount: '' }]);
+    setGst({ enabled: false, pct: 9 });
+    setActiveTab('form');
+  };
+
+  const handleLoadInvoice = (saved: SavedInvoice) => {
+    setHeader(saved.data.header);
+    setLineItems(saved.data.lineItems);
+    setGst(saved.data.gst);
+    setShowHistory(false);
+    setActiveTab('form');
+  };
+
+  const handleDeleteHistory = (id: string) => {
+    setHistory((prev) => {
+      const next = prev.filter((h) => h.id !== id);
+      try { localStorage.setItem('ww_invoice_history', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
 
   const inputCls =
     'mt-1 w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent';
@@ -183,12 +253,32 @@ export default function InvoiceApp() {
           <h1 className="font-bold text-base leading-tight">Invoice Generator</h1>
           <p className="text-blue-200 text-xs">Weeway Technical Maintenance</p>
         </div>
-        <button
-          onClick={handlePrint}
-          className="bg-white text-blue-700 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-50 active:bg-blue-100 transition-colors flex items-center gap-1.5"
-        >
-          <span>🖨</span> Print / Save PDF
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowHistory(true)}
+            className="relative bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
+          >
+            📋
+            <span className="hidden sm:inline">History</span>
+            {history.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-orange-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                {history.length > 9 ? '9+' : history.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={handleNewInvoice}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
+          >
+            ✚ <span className="hidden sm:inline">New</span>
+          </button>
+          <button
+            onClick={handlePrint}
+            className="bg-white text-blue-700 px-3 py-2 rounded-lg font-semibold text-sm hover:bg-blue-50 active:bg-blue-100 transition-colors flex items-center gap-1.5"
+          >
+            <span>🖨</span> <span className="hidden sm:inline">Print / Save PDF</span><span className="sm:hidden">Print</span>
+          </button>
+        </div>
       </header>
 
       {/* ── Mobile tab bar ── */}
@@ -604,6 +694,57 @@ export default function InvoiceApp() {
       <div className="print-only">
         <InvoiceDoc data={invoiceData} />
       </div>
+
+      {/* ════ HISTORY DRAWER ════ */}
+      {showHistory && (
+        <div className="no-print fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowHistory(false)} />
+          <div className="relative ml-auto w-full max-w-sm bg-white h-full flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <h2 className="font-semibold text-gray-800">Invoice History</h2>
+              <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+            </div>
+            {history.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-2">
+                <span className="text-4xl">📋</span>
+                <p className="text-sm">No saved invoices yet.</p>
+                <p className="text-xs text-center px-6">Invoices are saved automatically when you print.</p>
+              </div>
+            ) : (
+              <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+                {history.map((h) => (
+                  <div key={h.id} className="px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm text-blue-700">{h.refNo}</p>
+                        <p className="text-xs text-gray-600 truncate">{h.attentionTo || 'No client'}</p>
+                        <p className="text-xs text-gray-400 truncate">{h.jobSite || '—'}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          ${h.total.toFixed(2)} · {new Date(h.savedAt).toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-1.5 shrink-0">
+                        <button
+                          onClick={() => handleLoadInvoice(h)}
+                          className="text-xs bg-blue-600 text-white px-2.5 py-1 rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Load
+                        </button>
+                        <button
+                          onClick={() => handleDeleteHistory(h.id)}
+                          className="text-xs text-red-400 hover:text-red-600 px-2.5 py-1 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

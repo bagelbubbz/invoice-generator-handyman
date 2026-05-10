@@ -89,4 +89,16 @@ export const PRESET_CATEGORIES: PresetCategory[] = [
       { description: 'Install water filter / purifier', qty: '1 Lot', price: 80 },
     ],
   },
+  {
+    name: 'Charges',
+    emoji: '💰',
+    jobs: [
+      { description: 'Transportation charge', qty: '1 Trip', price: 30 },
+      { description: 'Labour charge', qty: '1 Hour', price: 50 },
+      { description: 'Supply of materials', qty: '1 Lot', price: 0 },
+      { description: 'Call-out / attendance fee', qty: '1 Lot', price: 50 },
+      { description: 'Weekend / public holiday surcharge', qty: '1 Lot', price: 30 },
+      { description: 'Waiting time charge', qty: '1 Hour', price: 30 },
+    ],
+  },
 ];
