@@ -69,7 +69,7 @@ export default function InvoiceApp() {
     refNo: generateRefNo(),
     date: today,
     attentionTo: '',
-    contactNo: '',
+    contactNo: '+65 ',
     jobSite: '',
     preamble: DEFAULT_PREAMBLE,
   });
@@ -360,9 +360,12 @@ export default function InvoiceApp() {
                   <label className={labelCls}>Contact No.</label>
                   <input
                     className={inputCls}
-                    placeholder="Phone number"
+                    placeholder="+65 XXXX XXXX"
                     value={header.contactNo}
-                    onChange={(e) => setHeader((p) => ({ ...p, contactNo: e.target.value }))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setHeader((p) => ({ ...p, contactNo: val.startsWith('+65') ? val : '+65 ' + val.replace(/^\+?\d*\s*/, '') }));
+                    }}
                   />
                 </div>
                 <div>
