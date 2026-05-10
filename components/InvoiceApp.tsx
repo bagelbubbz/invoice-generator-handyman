@@ -321,11 +321,11 @@ export default function InvoiceApp() {
             <section className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs">BUSINESS</span>
-                Business Info
+                Business Info <span className="text-gray-400 font-normal text-xs">商业信息</span>
               </h2>
               <div className="space-y-3">
                 <div>
-                  <label className={labelCls}>Company Name</label>
+                  <label className={labelCls}>Company Name <span className="text-gray-400 font-normal">公司名称</span></label>
                   <input
                     className={inputCls}
                     value={businessInfo.companyName}
@@ -335,7 +335,7 @@ export default function InvoiceApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Chinese Name</label>
+                  <label className={labelCls}>Chinese Name <span className="text-gray-400 font-normal">中文名称</span></label>
                   <input
                     className={inputCls}
                     value={businessInfo.chineseName}
@@ -347,7 +347,7 @@ export default function InvoiceApp() {
 
                 {/* Logo upload */}
                 <div>
-                  <label className={labelCls}>Company Logo</label>
+                  <label className={labelCls}>Company Logo <span className="text-gray-400 font-normal">公司标志</span></label>
                   <div className="mt-1 flex items-center gap-3">
                     {businessInfo.logo ? (
                       <div className="flex items-center gap-2">
@@ -380,7 +380,7 @@ export default function InvoiceApp() {
 
                 {/* Signature upload */}
                 <div>
-                  <label className={labelCls}>Authorised Signature</label>
+                  <label className={labelCls}>Authorised Signature <span className="text-gray-400 font-normal">授权签名</span></label>
                   <div className="mt-1 flex items-center gap-3">
                     {businessInfo.signature ? (
                       <div className="flex items-center gap-2">
@@ -417,12 +417,12 @@ export default function InvoiceApp() {
             <section className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="bg-green-100 text-green-700 rounded px-2 py-0.5 text-xs">INVOICE</span>
-                Invoice Details
+                Invoice Details <span className="text-gray-400 font-normal text-xs">账单详情</span>
               </h2>
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className={labelCls}>Reference No.</label>
+                    <label className={labelCls}>Reference No. <span className="text-gray-400 font-normal">参考编号</span></label>
                     <input
                       className={inputCls}
                       value={header.refNo}
@@ -430,7 +430,7 @@ export default function InvoiceApp() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <label className={labelCls}>Date</label>
+                    <label className={labelCls}>Date <span className="text-gray-400 font-normal">日期</span></label>
                     <input
                       type="date"
                       className={`${inputCls} w-full`}
@@ -441,7 +441,7 @@ export default function InvoiceApp() {
                   </div>
                 </div>
                 <div>
-                  <label className={labelCls}>Attention To</label>
+                  <label className={labelCls}>Attention To <span className="text-gray-400 font-normal">收件人</span></label>
                   <input
                     className={inputCls}
                     placeholder="Client name"
@@ -450,7 +450,7 @@ export default function InvoiceApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Contact No.</label>
+                  <label className={labelCls}>Contact No. <span className="text-gray-400 font-normal">联系电话</span></label>
                   <input
                     className={inputCls}
                     placeholder="+65 XXXX XXXX"
@@ -462,7 +462,7 @@ export default function InvoiceApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Job Site Address</label>
+                  <label className={labelCls}>Job Site Address <span className="text-gray-400 font-normal">工作地点</span></label>
                   <input
                     className={inputCls}
                     placeholder="Full address"
@@ -471,7 +471,7 @@ export default function InvoiceApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Preamble Text</label>
+                  <label className={labelCls}>Preamble Text <span className="text-gray-400 font-normal">前言内容</span></label>
                   <textarea
                     className="mt-1 w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                     rows={3}
@@ -486,7 +486,7 @@ export default function InvoiceApp() {
             <section className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="bg-orange-100 text-orange-700 rounded px-2 py-0.5 text-xs">QUICK ADD</span>
-                Preset Jobs
+                Preset Jobs <span className="text-gray-400 font-normal text-xs">快速添加</span>
               </h2>
               <QuickAddPanel onAdd={addLineItem} />
             </section>
@@ -495,7 +495,7 @@ export default function InvoiceApp() {
             <section className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="bg-purple-100 text-purple-700 rounded px-2 py-0.5 text-xs">ITEMS</span>
-                Line Items
+                Line Items <span className="text-gray-400 font-normal text-xs">项目明细</span>
               </h2>
               {/* Desktop table */}
               <div className="hidden sm:block overflow-x-auto -mx-1">
@@ -610,7 +610,7 @@ export default function InvoiceApp() {
             <section className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span className="bg-gray-100 text-gray-600 rounded px-2 py-0.5 text-xs">TOTAL</span>
-                Summary
+                Summary <span className="text-gray-400 font-normal text-xs">费用总计</span>
               </h2>
               <div className="space-y-2.5 text-sm">
                 <div className="flex justify-between text-gray-600">

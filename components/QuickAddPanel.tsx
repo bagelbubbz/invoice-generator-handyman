@@ -26,6 +26,7 @@ export default function QuickAddPanel({ onAdd }: Props) {
             >
               <span className="font-medium text-sm text-gray-700">
                 {cat.emoji} {cat.name}
+                <span className="ml-1.5 text-gray-400 font-normal text-xs">·  {cat.chinese}</span>
               </span>
               <span className="text-gray-400 text-xs">{isOpen ? '▲' : '▼'}</span>
             </button>
@@ -37,7 +38,8 @@ export default function QuickAddPanel({ onAdd }: Props) {
                     key={i}
                     className="border border-gray-100 rounded-lg p-2.5 flex flex-col gap-2 bg-gray-50 hover:bg-white hover:border-gray-200 transition-colors"
                   >
-                    <p className="text-xs text-gray-700 leading-snug flex-1">{job.description}</p>
+                    <p className="text-xs text-gray-700 leading-snug">{job.description}</p>
+                    <p className="text-xs text-blue-500 leading-snug">{job.chinese}</p>
                     <div className="flex items-center justify-between">
                       <div className="text-xs text-gray-400">
                         {job.qty} ·{' '}
