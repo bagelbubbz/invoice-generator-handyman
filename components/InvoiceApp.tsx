@@ -328,7 +328,7 @@ export default function InvoiceApp() {
                 Invoice Details
               </h2>
               <div className="space-y-3">
-                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className={labelCls}>Reference No.</label>
                     <input
@@ -337,11 +337,12 @@ export default function InvoiceApp() {
                       onChange={(e) => setHeader((p) => ({ ...p, refNo: e.target.value }))}
                     />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <label className={labelCls}>Date</label>
                     <input
                       type="date"
-                      className={inputCls}
+                      className={`${inputCls} w-full`}
+                      style={{ maxWidth: '100%' }}
                       value={header.date}
                       onChange={(e) => setHeader((p) => ({ ...p, date: e.target.value }))}
                     />
