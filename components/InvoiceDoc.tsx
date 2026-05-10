@@ -109,8 +109,11 @@ export default function InvoiceDoc({ data }: Props) {
               <div style={{ marginBottom: '4px', fontSize: '10pt' }}>
                 <strong>Contact No :</strong>&nbsp;&nbsp;{header.contactNo}
               </div>
+              <div style={{ marginBottom: '4px', fontSize: '10pt' }}>
+                <strong>Job Site :</strong>&nbsp;&nbsp;{header.jobSite}
+              </div>
               {header.re && (
-                <div style={{ marginTop: '6px', fontSize: '10pt' }}>
+                <div style={{ marginTop: '2px', fontSize: '10pt' }}>
                   <strong>Re :</strong>&nbsp;&nbsp;{header.re}
                 </div>
               )}
@@ -233,7 +236,7 @@ export default function InvoiceDoc({ data }: Props) {
             </tr>
           ))}
 
-          {/* ── FOOTER: job site + totals ── */}
+          {/* ── TOTALS ROW ── */}
           <tr>
             <td
               colSpan={3}
@@ -241,11 +244,8 @@ export default function InvoiceDoc({ data }: Props) {
                 border: B,
                 padding: '6px 10px',
                 fontSize: '9.5pt',
-                verticalAlign: 'top',
               }}
-            >
-              <strong>Job Site :</strong>&nbsp;&nbsp;{header.jobSite}
-            </td>
+            />
             <td
               style={{
                 border: B,
