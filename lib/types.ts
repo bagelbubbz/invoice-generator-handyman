@@ -11,7 +11,6 @@ export interface InvoiceHeader {
   attentionTo: string;
   contactNo: string;
   jobSite: string;
-  re: string;
   preamble: string;
 }
 

@@ -36,7 +36,6 @@ export default function InvoiceApp() {
     attentionTo: '',
     contactNo: '',
     jobSite: '',
-    re: '',
     preamble: DEFAULT_PREAMBLE,
   });
   const [lineItems, setLineItems] = useState<LineItem[]>([
@@ -333,15 +332,6 @@ export default function InvoiceApp() {
                     placeholder="Full address"
                     value={header.jobSite}
                     onChange={(e) => setHeader((p) => ({ ...p, jobSite: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Re: (optional)</label>
-                  <input
-                    className={inputCls}
-                    placeholder="Subject heading"
-                    value={header.re}
-                    onChange={(e) => setHeader((p) => ({ ...p, re: e.target.value }))}
                   />
                 </div>
                 <div>

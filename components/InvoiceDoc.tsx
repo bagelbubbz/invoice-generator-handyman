@@ -112,11 +112,6 @@ export default function InvoiceDoc({ data }: Props) {
               <div style={{ marginBottom: '4px', fontSize: '10pt' }}>
                 <strong>Job Site :</strong>&nbsp;&nbsp;{header.jobSite}
               </div>
-              {header.re && (
-                <div style={{ marginTop: '2px', fontSize: '10pt' }}>
-                  <strong>Re :</strong>&nbsp;&nbsp;{header.re}
-                </div>
-              )}
             </td>
             <td
               colSpan={2}
