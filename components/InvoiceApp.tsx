@@ -1,12 +1,47 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import QuickAddPanel from './QuickAddPanel';
 import InvoiceDoc from './InvoiceDoc';
 import type { BusinessInfo, InvoiceHeader, LineItem, GSTSettings } from '@/lib/types';
 import type { PresetJob } from '@/lib/presets';
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+function PreviewScaler({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  const updateScale = useCallback(() => {
+    if (containerRef.current) {
+      const available = containerRef.current.offsetWidth;
+      setScale(Math.min(1, available / 794));
+    }
+  }, []);
+
+  useEffect(() => {
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, [updateScale]);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%' }}>
+      <div
+        style={{
+          transformOrigin: 'top left',
+          transform: `scale(${scale})`,
+          width: '794px',
+          height: `${1123 * scale}px`,
+          marginBottom: `${1123 * (scale - 1)}px`,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function generateRefNo(): string {
   const d = new Date();
@@ -500,18 +535,20 @@ export default function InvoiceApp() {
             activeTab === 'form' ? 'hidden' : 'block'
           } md:block md:w-1/2 lg:w-7/12 bg-gray-300 overflow-y-auto`}
         >
-          <div className="no-print p-6 min-h-full">
+          <div className="no-print p-4 md:p-6 min-h-full">
             <p className="text-center text-gray-500 text-xs mb-4 font-medium uppercase tracking-wide">
               Live Preview
             </p>
-            <div
-              className="bg-white shadow-xl mx-auto rounded-sm"
-              style={{ maxWidth: '794px', minHeight: '1123px' }}
-            >
-              <div className="p-8">
-                <InvoiceDoc data={invoiceData} />
+            <PreviewScaler>
+              <div
+                className="bg-white shadow-xl rounded-sm"
+                style={{ width: '794px', minHeight: '1123px' }}
+              >
+                <div className="p-8">
+                  <InvoiceDoc data={invoiceData} />
+                </div>
               </div>
-            </div>
+            </PreviewScaler>
           </div>
         </div>
       </div>
