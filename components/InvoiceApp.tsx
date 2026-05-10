@@ -29,14 +29,15 @@ function PreviewScaler({ children, isVisible }: { children: React.ReactNode; isV
   }, [isVisible, updateScale]);
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', height: `${1123 * scale}px`, position: 'relative' }}>
       <div
         style={{
           transformOrigin: 'top left',
           transform: `scale(${scale})`,
           width: '794px',
-          height: `${1123 * scale}px`,
-          marginBottom: `${1123 * (scale - 1)}px`,
+          position: 'absolute',
+          top: 0,
+          left: 0,
         }}
       >
         {children}
