@@ -9,29 +9,27 @@ import type { PresetJob } from '@/lib/presets';
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 function PreviewScaler({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
   const updateScale = useCallback(() => {
-    if (containerRef.current) {
-      const available = containerRef.current.offsetWidth;
-      if (available > 0) setScale(Math.min(1, available / 794));
-    }
+    // p-4 = 16px each side on mobile, p-6 = 24px each side on md+
+    const padding = window.innerWidth >= 768 ? 48 : 32;
+    const available = window.innerWidth - padding;
+    setScale(Math.min(1, available / 794));
   }, []);
 
   useEffect(() => {
     updateScale();
-    const ro = new ResizeObserver(updateScale);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
   }, [updateScale]);
 
   useEffect(() => {
-    if (isVisible) setTimeout(updateScale, 30);
+    if (isVisible) updateScale();
   }, [isVisible, updateScale]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%' }}>
+    <div style={{ width: '100%' }}>
       <div
         style={{
           transformOrigin: 'top left',
