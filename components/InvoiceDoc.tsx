@@ -23,7 +23,7 @@ export default function InvoiceDoc({ data }: Props) {
   const subtotal = lineItems.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
   const gstAmount = gst.enabled ? subtotal * (gst.pct / 100) : 0;
   const total = subtotal + gstAmount;
-  const downPaymentAmt = downPayment?.enabled ? (parseFloat(downPayment.amount) || 0) : 0;
+  const downPaymentAmt = downPayment?.enabled ? (total * (downPayment.pct ?? 50) / 100) : 0;
   const balanceDue = Math.max(0, total - downPaymentAmt);
 
   const rows = [...lineItems];
@@ -279,7 +279,7 @@ export default function InvoiceDoc({ data }: Props) {
                   {downPayment?.enabled && downPaymentAmt > 0 && (
                     <>
                       <tr>
-                        <td style={{ fontSize: '9pt', paddingTop: '3px' }}>Down Payment</td>
+                        <td style={{ fontSize: '9pt', paddingTop: '3px' }}>Down Payment ({downPayment.pct}%)</td>
                         <td style={{ fontSize: '9pt', textAlign: 'right', paddingTop: '3px' }}>-${downPaymentAmt.toFixed(2)}</td>
                       </tr>
                       <tr>

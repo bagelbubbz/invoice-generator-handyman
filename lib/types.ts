@@ -29,7 +29,7 @@ export interface GSTSettings {
 
 export interface DownPayment {
   enabled: boolean;
-  amount: string;
+  pct: number;
 }
 
 export interface InvoiceData {
