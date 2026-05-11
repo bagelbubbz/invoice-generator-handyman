@@ -17,12 +17,14 @@ function formatDate(dateStr: string): string {
 }
 
 export default function InvoiceDoc({ data }: Props) {
-  const { businessInfo, header, lineItems, gst, docType } = data;
+  const { businessInfo, header, lineItems, gst, docType, downPayment } = data;
   const docLabel = docType === 'quotation' ? 'Quotation' : 'Invoice';
 
   const subtotal = lineItems.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
   const gstAmount = gst.enabled ? subtotal * (gst.pct / 100) : 0;
   const total = subtotal + gstAmount;
+  const downPaymentAmt = downPayment?.enabled ? (parseFloat(downPayment.amount) || 0) : 0;
+  const balanceDue = Math.max(0, total - downPaymentAmt);
 
   const rows = [...lineItems];
   while (rows.length < MIN_ROWS) {
@@ -274,6 +276,18 @@ export default function InvoiceDoc({ data }: Props) {
                       ${total.toFixed(2)}
                     </td>
                   </tr>
+                  {downPayment?.enabled && downPaymentAmt > 0 && (
+                    <>
+                      <tr>
+                        <td style={{ fontSize: '9pt', paddingTop: '3px' }}>Down Payment</td>
+                        <td style={{ fontSize: '9pt', textAlign: 'right', paddingTop: '3px' }}>-${downPaymentAmt.toFixed(2)}</td>
+                      </tr>
+                      <tr>
+                        <td style={{ fontWeight: 'bold', fontSize: '10pt', paddingTop: '3px', borderTop: '1px solid #000' }}>Balance Due</td>
+                        <td style={{ fontWeight: 'bold', fontSize: '10pt', textAlign: 'right', paddingTop: '3px', borderTop: '1px solid #000' }}>${balanceDue.toFixed(2)}</td>
+                      </tr>
+                    </>
+                  )}
                 </tbody>
               </table>
             </td>
@@ -325,6 +339,23 @@ export default function InvoiceDoc({ data }: Props) {
               <div style={{ borderTop: '1px solid #000', width: '170px', marginTop: '2px' }} />
             </td>
           </tr>
+
+          {/* ── PAYNOW ROW ── */}
+          {businessInfo.payNow && (
+            <tr>
+              <td
+                colSpan={4}
+                style={{
+                  border: B,
+                  padding: '6px 10px',
+                  fontSize: '9pt',
+                  textAlign: 'center',
+                }}
+              >
+                <strong>Payment via PayNow:</strong> {businessInfo.payNow}
+              </td>
+            </tr>
+          )}
 
         </tbody>
       </table>

@@ -3,6 +3,7 @@ export interface BusinessInfo {
   chineseName: string;
   logo: string;
   signature: string;
+  payNow: string;
 }
 
 export interface InvoiceHeader {
@@ -26,12 +27,18 @@ export interface GSTSettings {
   pct: number;
 }
 
+export interface DownPayment {
+  enabled: boolean;
+  amount: string;
+}
+
 export interface InvoiceData {
   businessInfo: BusinessInfo;
   header: InvoiceHeader;
   lineItems: LineItem[];
   gst: GSTSettings;
   docType: 'invoice' | 'quotation';
+  downPayment: DownPayment;
 }
 
 export interface SavedInvoice {
