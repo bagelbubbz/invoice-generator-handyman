@@ -62,6 +62,14 @@ function saveCounter(n: number) {
   try { localStorage.setItem('ww_invoice_counter', String(n)); } catch {}
 }
 
+async function translateToEnglish(text: string): Promise<string> {
+  const res = await fetch(
+    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=zh|en`
+  );
+  const data = await res.json();
+  return data.responseData?.translatedText || text;
+}
+
 const today = new Date().toISOString().split('T')[0];
 
 const DEFAULT_PREAMBLE_INVOICE =
@@ -98,6 +106,9 @@ export default function InvoiceApp() {
   const [mounted, setMounted] = useState(false);
   const [history, setHistory] = useState<SavedInvoice[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [recordingId, setRecordingId] = useState<string | null>(null);
+  const [translatingId, setTranslatingId] = useState<string | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const sigInputRef = useRef<HTMLInputElement>(null);
@@ -196,6 +207,48 @@ export default function InvoiceApp() {
     const label = docType === 'quotation' ? 'Quotation' : 'Invoice';
     document.title = `Weeway Technical Maintenance Service - ${label} ${header.refNo}`;
   }, [header.refNo, docType]);
+
+  const handleTranslate = async (id: string, text: string) => {
+    if (!text.trim()) return;
+    setTranslatingId(id);
+    try {
+      const english = await translateToEnglish(text);
+      updateLineItem(id, 'description', english);
+    } finally {
+      setTranslatingId(null);
+    }
+  };
+
+  const handleVoiceInput = (id: string) => {
+    // Stop if already recording this item
+    if (recordingId === id) {
+      recognitionRef.current?.stop();
+      setRecordingId(null);
+      return;
+    }
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { alert('Voice input is not supported in this browser. Try Chrome or Safari.'); return; }
+    const recognition = new SR();
+    recognition.lang = 'zh-CN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
+    setRecordingId(id);
+    recognition.onresult = async (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setRecordingId(null);
+      setTranslatingId(id);
+      try {
+        const english = await translateToEnglish(transcript);
+        updateLineItem(id, 'description', english);
+      } finally {
+        setTranslatingId(null);
+      }
+    };
+    recognition.onerror = () => { setRecordingId(null); setTranslatingId(null); };
+    recognition.onend = () => setRecordingId(null);
+    recognition.start();
+  };
 
   const saveToHistory = (data: typeof invoiceData, tot: number) => {
     const entry: SavedInvoice = {
@@ -566,9 +619,25 @@ export default function InvoiceApp() {
                           <input
                             className="w-full bg-transparent focus:bg-white focus:border focus:border-gray-200 rounded px-1.5 py-1 text-sm focus:outline-none"
                             value={item.description}
-                            placeholder="Description"
+                            placeholder="Description / 描述"
                             onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
                           />
+                          <div className="flex gap-1 mt-0.5">
+                            <button
+                              onClick={() => handleVoiceInput(item.id)}
+                              title="Speak in Mandarin"
+                              className={`text-xs px-1.5 py-0.5 rounded transition-colors ${recordingId === item.id ? 'bg-red-100 text-red-600 animate-pulse' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'}`}
+                            >
+                              {recordingId === item.id ? '🔴' : translatingId === item.id ? '⏳' : '🎤'}
+                            </button>
+                            <button
+                              onClick={() => handleTranslate(item.id, item.description)}
+                              title="Translate Chinese to English"
+                              className="text-xs px-1.5 py-0.5 rounded text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            >
+                              {translatingId === item.id ? '⏳' : '🌐'}
+                            </button>
+                          </div>
                         </td>
                         <td className="py-2 px-1">
                           <input
@@ -617,10 +686,24 @@ export default function InvoiceApp() {
                     <textarea
                       rows={2}
                       className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-none"
-                      placeholder="Description"
+                      placeholder="Description / 可用中文输入"
                       value={item.description}
                       onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
                     />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleVoiceInput(item.id)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-medium border transition-colors ${recordingId === item.id ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'}`}
+                      >
+                        {recordingId === item.id ? '🔴 Recording...' : translatingId === item.id ? '⏳ Translating...' : '🎤 Speak 说话'}
+                      </button>
+                      <button
+                        onClick={() => handleTranslate(item.id, item.description)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-medium border bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600 transition-colors"
+                      >
+                        {translatingId === item.id ? '⏳ Translating...' : '🌐 Translate 翻译'}
+                      </button>
+                    </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-xs text-gray-500 mb-0.5 block">Qty</label>
