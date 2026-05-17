@@ -31,6 +31,8 @@ export const PRESET_CATEGORIES: PresetCategory[] = [
       { description: 'Replace basin tap', chinese: '更换洗脸盆水龙头', qty: '1 Lot', price: 50 },
       { description: 'Supply & install angle valve', chinese: '供应及安装角阀', qty: '1 Lot', price: 35 },
       { description: 'Silicon sealing (sink / basin)', chinese: '硅胶密封（水槽/洗脸盆）', qty: '1 Lot', price: 40 },
+      { description: 'Supply & install bidet / bidet spray', chinese: '供应及安装洁身器/妇洗器', qty: '1 Lot', price: 60 },
+      { description: 'Install bidet seat (electronic)', chinese: '安装电子洁身马桶盖', qty: '1 Lot', price: 80 },
     ],
   },
   {
