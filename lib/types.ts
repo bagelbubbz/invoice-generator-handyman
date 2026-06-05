@@ -4,6 +4,7 @@ export interface BusinessInfo {
   logo: string;
   signature: string;
   payNow: string;
+  webhookUrl: string;
 }
 
 export interface InvoiceHeader {
