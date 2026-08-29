@@ -263,7 +263,7 @@ export default function InvoiceApp() {
       data,
     };
     setHistory((prev) => {
-      const next = [entry, ...prev].slice(0, 50);
+      const next = [entry, ...prev].slice(0, 200);
       try { localStorage.setItem('ww_invoice_history', JSON.stringify(next)); } catch {}
       return next;
     });
